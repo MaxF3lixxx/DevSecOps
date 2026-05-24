@@ -12,6 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Dar permisos a gradlew
+        run: chmod +x gradlew
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
