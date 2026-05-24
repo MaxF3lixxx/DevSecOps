@@ -11,9 +11,21 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# Obtener la AMI más reciente de Amazon Linux 2023 (recomendado)
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+}
+
 # VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
+
   tags = {
     Name = "gym-app-vpc"
   }
@@ -28,6 +40,7 @@ resource "aws_security_group" "allow_web" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTP"
   }
 
   ingress {
@@ -35,6 +48,7 @@ resource "aws_security_group" "allow_web" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "SSH"
   }
 
   egress {
@@ -51,16 +65,21 @@ resource "aws_security_group" "allow_web" {
 
 # EC2 Instance (Backend)
 resource "aws_instance" "gym_backend" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2
-  instance_type = "t2.micro"
+  ami                    = data.aws_ami.amazon_linux.id
+  instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.allow_web.id]
 
   tags = {
-    Name = "gym-mobile-backend"
+    Name        = "gym-mobile-backend"
     Environment = "DevSecOps"
+    Project     = "GymApp"
   }
 }
 
 output "instance_public_ip" {
   value = aws_instance.gym_backend.public_ip
+}
+
+output "instance_id" {
+  value = aws_instance.gym_backend.id
 }
