@@ -41,8 +41,9 @@ fun GymTrackerApp() {
     ) {
 
         Text(
-            text = "Gym Tracker",
+            text = "Gym Tracker DevSecOps",
             style = MaterialTheme.typography.headlineMedium
+
         )
 
         Spacer(modifier = Modifier.height(8.dp))
