@@ -3,7 +3,7 @@ name: Android CI
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -20,4 +20,3 @@ jobs:
 
       - name: Build
         run: ./gradlew assembleDebug
-        
